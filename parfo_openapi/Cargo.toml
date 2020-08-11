@@ -1,0 +1,15 @@
+[package]
+name = "parfo_openapi"
+version = "0.1.0"
+authors = ["Xuanwo <github@xuanwo.io>"]
+edition = "2018"
+description = "parfo support for openapi"
+license = "Apache-2.0"
+repository = "https://github.com/Xuanwo/parfo/"
+
+[dependencies]
+serde = { version = "1.0.115", features = ["derive", "std"] }
+
+[dev-dependencies]
+serde_json = "1.0.57"
+serde_yaml = "0.8.13"

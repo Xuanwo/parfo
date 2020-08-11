@@ -1,0 +1,2 @@
+[workspace]
+members=["parfo_openapi"]
