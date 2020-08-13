@@ -2,6 +2,7 @@ use std::collections::BTreeMap;
 
 use serde::{Deserialize, Serialize};
 
+
 #[derive(Debug, Deserialize, Serialize, PartialEq, Clone)]
 pub struct Spec {
     pub openapi: String,
@@ -13,26 +14,17 @@ pub struct Spec {
 #[serde(untagged)]
 pub enum Object<T> {
     Origin(T),
-    Reference {
-        #[serde(rename = "$ref")]
-        ref_: String,
-        description: Option<String>,
-    },
-    Empty {},
+    Reference(Reference),
+    Empty,
 }
 
-#[derive(Debug, Deserialize, Serialize, PartialEq, Eq, Hash, Copy, Clone, Ord, PartialOrd)]
-#[serde(rename_all = "lowercase")]
-pub enum Method {
-    Get,
-    Put,
-    Post,
-    Delete,
-    Head,
-    Patch,
-    Options,
-    Trace,
+#[derive(Debug, Deserialize, Serialize, PartialEq, Clone)]
+pub struct Reference {
+    #[serde(rename = "$ref")]
+    pub ref_: String,
+    pub description: Option<String>,
 }
+
 
 #[derive(Debug, Deserialize, Serialize, PartialEq, Clone)]
 pub struct PathItem {
@@ -42,7 +34,7 @@ pub struct PathItem {
     pub parameters: Option<Vec<Object<Parameter>>>,
 
     #[serde(flatten)]
-    pub operations: BTreeMap<Method, Operation>,
+    pub operations: BTreeMap<String, Operation>,
 }
 
 #[derive(Debug, Deserialize, Serialize, PartialEq, Clone)]
@@ -91,7 +83,7 @@ pub struct Parameter {
     pub in_: String,
     pub required: Option<bool>,
     // TODO: support content here.
-    pub schema: Option<Schema>,
+    pub schema: Schema,
     pub style: Option<String>,
 }
 
@@ -112,7 +104,7 @@ pub struct Operation {
     pub description: Option<String>,
     #[serde(rename = "operationId")]
     pub operation_id: String,
-    pub parameters: Option<Vec<Parameter>>,
+    pub parameters: Option<Vec<Object<Parameter>>>,
     #[serde(rename = "requestBody")]
     pub request_body: Option<RequestBody>,
     pub responses: Option<BTreeMap<String, Response>>,
