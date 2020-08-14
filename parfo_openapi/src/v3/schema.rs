@@ -15,7 +15,7 @@ pub struct Spec {
 pub enum Object<T> {
     Origin(T),
     Reference(Reference),
-    Empty,
+    Empty{},
 }
 
 #[derive(Debug, Deserialize, Serialize, PartialEq, Clone)]
