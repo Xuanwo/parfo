@@ -1,30 +1,39 @@
 use std::collections::BTreeMap;
 
 use serde::{Deserialize, Serialize};
-
+use serde_value::Value;
 
 #[derive(Debug, Deserialize, Serialize, PartialEq, Clone)]
 pub struct Spec {
     pub openapi: String,
+    pub info: Option<Info>,
+
     pub paths: BTreeMap<String, PathItem>,
     pub components: Option<Components>,
 }
 
 #[derive(Debug, Deserialize, Serialize, PartialEq, Clone)]
+pub struct Info {
+    pub version: String,
+
+    #[serde(flatten)]
+    pub extensions: BTreeMap<String, Value>,
+}
+
+#[derive(Debug, Deserialize, Serialize, PartialEq, Eq, Clone)]
 #[serde(untagged)]
 pub enum Object<T> {
     Origin(T),
     Reference(Reference),
-    Empty{},
+    Empty {},
 }
 
-#[derive(Debug, Deserialize, Serialize, PartialEq, Clone)]
+#[derive(Debug, Deserialize, Serialize, PartialEq, Eq, Clone)]
 pub struct Reference {
     #[serde(rename = "$ref")]
     pub ref_: String,
     pub description: Option<String>,
 }
-
 
 #[derive(Debug, Deserialize, Serialize, PartialEq, Clone)]
 pub struct PathItem {
@@ -49,7 +58,7 @@ pub struct Components {
 // ref: https://swagger.io/specification/
 //   - integer as a type is also supported and is defined as a JSON number without a fraction or exponent part.
 //   - null is not supported as a type (see nullable for an alternative solution).
-#[derive(Debug, Deserialize, Serialize, PartialEq, Clone)]
+#[derive(Debug, Deserialize, Serialize, PartialEq, Eq, Clone)]
 #[serde(rename_all = "lowercase")]
 pub enum SchemaType {
     Boolean,
@@ -60,7 +69,7 @@ pub enum SchemaType {
     Integer,
 }
 
-#[derive(Debug, Deserialize, Serialize, PartialEq, Clone)]
+#[derive(Debug, Deserialize, Serialize, PartialEq, Eq, Clone)]
 pub struct Schema {
     #[serde(rename = "type")]
     pub type_: SchemaType,
@@ -69,14 +78,14 @@ pub struct Schema {
     pub properties: Option<BTreeMap<String, Object<Schema>>>,
 }
 
-#[derive(Debug, Deserialize, Serialize, PartialEq, Clone)]
+#[derive(Debug, Deserialize, Serialize, PartialEq, Eq, Clone)]
 pub struct Response {
     pub description: String,
     pub headers: Option<BTreeMap<String, Object<Header>>>,
     pub content: Option<BTreeMap<String, MediaType>>,
 }
 
-#[derive(Debug, Deserialize, Serialize, PartialEq, Clone)]
+#[derive(Debug, Deserialize, Serialize, PartialEq, Eq, Clone)]
 pub struct Parameter {
     pub name: String,
     #[serde(rename = "in")]
@@ -87,18 +96,18 @@ pub struct Parameter {
     pub style: Option<String>,
 }
 
-#[derive(Debug, Deserialize, Serialize, PartialEq, Clone)]
+#[derive(Debug, Deserialize, Serialize, PartialEq, Eq, Clone)]
 pub struct RequestBody {
     pub content: BTreeMap<String, MediaType>,
 }
 
-#[derive(Debug, Deserialize, Serialize, PartialEq, Clone)]
+#[derive(Debug, Deserialize, Serialize, PartialEq, Eq, Clone)]
 pub struct Header {
     pub description: Option<String>,
     pub schema: Schema,
 }
 
-#[derive(Debug, Deserialize, Serialize, PartialEq, Clone)]
+#[derive(Debug, Deserialize, Serialize, PartialEq, Eq, Clone)]
 pub struct Operation {
     pub summary: Option<String>,
     pub description: Option<String>,
@@ -110,7 +119,7 @@ pub struct Operation {
     pub responses: Option<BTreeMap<String, Response>>,
 }
 
-#[derive(Debug, Deserialize, Serialize, PartialEq, Clone)]
+#[derive(Debug, Deserialize, Serialize, PartialEq, Eq, Clone)]
 pub struct MediaType {
     pub schema: Object<Schema>,
 }

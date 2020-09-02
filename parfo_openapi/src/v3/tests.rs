@@ -2,6 +2,7 @@ use std::error::Error;
 use std::fs::File;
 
 use serde_json;
+use serde_yaml;
 
 use super::*;
 
